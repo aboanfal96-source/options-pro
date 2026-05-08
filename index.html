@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TADAWUL OPTIONS PRO | منصة الخيارات الاستباقية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0e17;--bg2:#111827;--bg3:#1a2332;--bg4:#243042;
+  --t1:#e2e8f0;--t2:#94a3b8;--t3:#64748b;
+  --grn:#00e676;--grn2:#00c853;--grn3:rgba(0,230,118,.12);
+  --red:#ff1744;--red2:#d50000;--red3:rgba(255,23,68,.12);
+  --blu:#2196f3;--blu2:#1565c0;--blu3:rgba(33,150,243,.12);
+  --ylw:#ffc107;--ylw3:rgba(255,193,7,.12);
+  --prp:#ab47bc;--prp3:rgba(171,71,188,.12);
+  --orn:#ff9800;--orn3:rgba(255,152,0,.12);
+  --cyn:#00bcd4;--cyn3:rgba(0,188,212,.12);
+  --gld:#ffd700;
+  --brd:#1e293b;--brd2:#334155;
+  --r:8px;--r2:12px;--r3:16px;
+  --font:'Cairo',sans-serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);overflow-x:hidden;font-size:13px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+input,select,button,textarea{font-family:var(--font);outline:none;border:none;background:none;color:var(--t1)}
+button{cursor:pointer}
+.up{color:var(--grn)}.dn{color:var(--red)}.nut{color:var(--t2)}
+.badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;display:inline-block}
+.badge-grn{background:var(--grn3);color:var(--grn)}.badge-red{background:var(--red3);color:var(--red)}
+.badge-blu{background:var(--blu3);color:var(--blu)}.badge-ylw{background:var(--ylw3);color:var(--ylw)}
+.badge-prp{background:var(--prp3);color:var(--prp)}.badge-orn{background:var(--orn3);color:var(--orn)}
+.badge-cyn{background:var(--cyn3);color:var(--cyn)}
+
+/* TOP BAR */
+#topBar{height:32px;background:var(--bg2);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 12px;gap:12px;overflow:hidden}
+#ticker{display:flex;gap:20px;animation:scroll 40s linear infinite;white-space:nowrap}
+@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.tick-item{font-size:11px;display:flex;gap:6px;align-items:center}
+.tick-item .sym{color:var(--t2);font-weight:600}.tick-item .prc{color:var(--t1)}
+
+/* HEADER */
+#header{height:48px;background:var(--bg2);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 16px;justify-content:space-between}
+#logo{font-size:18px;font-weight:900;letter-spacing:-1px;display:flex;align-items:center;gap:8px}
+#logo .pro{color:var(--gld);font-size:12px;background:rgba(255,215,0,.15);padding:2px 8px;border-radius:4px}
+#symInput{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:6px 14px;width:200px;font-size:13px;font-weight:600;text-align:center;text-transform:uppercase}
+#symInput:focus{border-color:var(--blu)}
+.hdr-tabs{display:flex;gap:4px}
+.hdr-tab{padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:600;color:var(--t3);transition:.2s}
+.hdr-tab:hover,.hdr-tab.active{background:var(--bg3);color:var(--t1)}
+.hdr-tab.active{color:var(--gld);background:rgba(255,215,0,.08)}
+
+/* LAYOUT */
+#app{display:grid;grid-template-columns:1fr 340px;grid-template-rows:auto 1fr;height:calc(100vh - 80px)}
+#mainArea{grid-column:1;overflow-y:auto;padding:8px}
+#sidePanel{grid-column:2;background:var(--bg2);border-right:1px solid var(--brd);overflow-y:auto;display:flex;flex-direction:column}
+
+/* STOCK INFO BAR */
+#infoBar{display:flex;align-items:center;gap:16px;padding:8px 12px;background:var(--bg2);border-radius:var(--r2);margin-bottom:8px;flex-wrap:wrap}
+.info-price{font-size:28px;font-weight:900;font-family:var(--mono)}
+.info-change{font-size:14px;font-weight:700;padding:4px 10px;border-radius:var(--r)}
+.info-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.info-stat .lbl{font-size:9px;color:var(--t3);text-transform:uppercase}.info-stat .val{font-size:12px;font-weight:600;font-family:var(--mono)}
+.info-divider{width:1px;height:30px;background:var(--brd)}
+
+/* CHART */
+#chartWrap{background:var(--bg2);border-radius:var(--r2);border:1px solid var(--brd);padding:4px;margin-bottom:8px;position:relative}
+#chartHeader{display:flex;align-items:center;gap:8px;padding:4px 8px;border-bottom:1px solid var(--brd);flex-wrap:wrap}
+.ch-btn{padding:4px 10px;border-radius:var(--r);font-size:11px;color:var(--t3);transition:.2s}
+.ch-btn:hover,.ch-btn.active{background:var(--bg3);color:var(--t1)}.ch-btn.active{color:var(--gld)}
+#chartCanvas{width:100%;height:380px;display:block}
+#chartOverlay{position:absolute;top:40px;left:0;right:0;bottom:0;pointer-events:none}
+
+/* TABS CONTAINER */
+#tabsWrap{background:var(--bg2);border-radius:var(--r2);border:1px solid var(--brd);overflow:hidden}
+#tabsHeader{display:flex;background:var(--bg);border-bottom:1px solid var(--brd);overflow-x:auto}
+.tab-btn{padding:10px 16px;font-size:12px;font-weight:600;color:var(--t3);white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
+.tab-btn:hover{color:var(--t2)}.tab-btn.active{color:var(--gld);border-bottom-color:var(--gld)}
+#tabContent{padding:8px;min-height:300px;max-height:500px;overflow-y:auto}
+
+/* OPTIONS TABLE */
+.opt-table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)}
+.opt-table th{background:var(--bg);padding:6px 8px;text-align:center;color:var(--t3);font-weight:600;position:sticky;top:0;z-index:2;font-size:10px}
+.opt-table td{padding:5px 8px;text-align:center;border-bottom:1px solid var(--brd)}
+.opt-table tr:hover{background:var(--bg3)}
+.opt-table .strike-col{background:var(--bg);font-weight:700;color:var(--gld);border-left:2px solid var(--gld);border-right:2px solid var(--gld);position:sticky;z-index:1}
+.opt-table .call-itm{background:rgba(0,230,118,.04)}.opt-table .put-itm{background:rgba(255,23,68,.04)}
+.vol-bar{height:4px;border-radius:2px;display:inline-block;vertical-align:middle;margin-right:4px}
+
+/* GAMMA WALL */
+#gammaWall{position:relative}
+#gammaCanvas{width:100%;height:280px;display:block}
+.gamma-legend{display:flex;gap:12px;padding:8px;justify-content:center;font-size:11px}
+.gamma-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-left:4px}
+
+/* GREEKS DASHBOARD */
+.greeks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px}
+.greek-card{background:var(--bg3);border-radius:var(--r);padding:12px;text-align:center;border:1px solid var(--brd)}
+.greek-card .gk-name{font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:4px}
+.greek-card .gk-val{font-size:22px;font-weight:900;font-family:var(--mono)}
+.greek-card .gk-dir{font-size:10px;margin-top:4px}
+.greek-card .gk-bar{height:4px;background:var(--bg);border-radius:2px;margin-top:6px;overflow:hidden}
+.greek-card .gk-fill{height:100%;border-radius:2px;transition:.5s}
+.greeks-summary{padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin:8px;font-size:12px;line-height:1.8;border-right:3px solid var(--gld)}
+
+/* STRATEGY BUILDER */
+#stratBuilder{padding:8px}
+.strat-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.strat-btn{padding:6px 14px;border-radius:var(--r);font-size:11px;font-weight:600;border:1px solid var(--brd);transition:.2s}
+.strat-btn:hover{border-color:var(--blu);color:var(--blu)}
+.strat-btn.active{background:var(--blu3);color:var(--blu);border-color:var(--blu)}
+.strat-legs{margin-bottom:12px}
+.strat-leg{display:flex;align-items:center;gap:8px;padding:6px;background:var(--bg3);border-radius:var(--r);margin-bottom:4px}
+.strat-leg select,.strat-leg input{background:var(--bg);border:1px solid var(--brd);border-radius:4px;padding:4px 8px;font-size:11px}
+.strat-leg select{width:80px}.strat-leg input{width:70px;text-align:center}
+.strat-leg .remove-leg{color:var(--red);font-size:14px;padding:2px 6px;border-radius:4px}
+.strat-leg .remove-leg:hover{background:var(--red3)}
+#plCanvas{width:100%;height:220px;display:block;background:var(--bg);border-radius:var(--r);border:1px solid var(--brd)}
+.strat-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.strat-stat{background:var(--bg3);border-radius:var(--r);padding:8px;text-align:center}
+.strat-stat .ss-lbl{font-size:9px;color:var(--t3)}.strat-stat .ss-val{font-size:14px;font-weight:700;font-family:var(--mono)}
+
+/* FEAR/GREED GAUGE */
+#fgWrap{padding:12px;text-align:center}
+#fgCanvas{width:260px;height:160px;margin:0 auto;display:block}
+.fg-val{font-size:42px;font-weight:900;font-family:var(--mono);margin:8px 0}
+.fg-label{font-size:14px;font-weight:700;margin-bottom:12px}
+.fg-factors{display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:right;font-size:11px}
+.fg-factor{display:flex;justify-content:space-between;padding:4px 8px;background:var(--bg3);border-radius:4px}
+
+/* SIDE PANEL SECTIONS */
+.sp-section{border-bottom:1px solid var(--brd);padding:12px}
+.sp-title{font-size:12px;font-weight:700;color:var(--gld);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+/* AI CHAT */
+#aiChat{flex:1;display:flex;flex-direction:column;min-height:300px}
+#aiMessages{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
+.ai-msg{padding:8px 12px;border-radius:var(--r);font-size:12px;line-height:1.6;max-width:90%}
+.ai-msg.user{background:var(--blu3);color:var(--blu);align-self:flex-end;border-bottom-left-radius:var(--r)}
+.ai-msg.bot{background:var(--bg3);align-self:flex-start;border-bottom-right-radius:var(--r);border-right:2px solid var(--gld)}
+.ai-msg.bot .typing{display:inline-block;animation:blink 1s infinite}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.3}}
+#aiInputWrap{display:flex;gap:6px;padding:8px;border-top:1px solid var(--brd)}
+#aiInput{flex:1;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:8px 12px;font-size:12px;resize:none;height:38px}
+#aiInput:focus{border-color:var(--gld)}
+#aiSend{background:var(--gld);color:var(--bg);font-weight:700;padding:0 16px;border-radius:var(--r);font-size:13px;transition:.2s}
+#aiSend:hover{background:#ffea00}
+.ai-quick{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}
+.ai-qbtn{font-size:10px;padding:3px 8px;border-radius:12px;border:1px solid var(--brd);color:var(--t3);transition:.2s}
+.ai-qbtn:hover{border-color:var(--gld);color:var(--gld)}
+
+/* FLOW ALERTS */
+.flow-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border-radius:var(--r);margin-bottom:4px;border-right:3px solid var(--grn);font-size:11px}
+.flow-item.bearish{border-right-color:var(--red)}
+.flow-item .fl-sym{font-weight:700;min-width:50px}
+.flow-item .fl-type{font-size:10px;padding:2px 6px;border-radius:3px}
+.flow-item .fl-vol{font-family:var(--mono);color:var(--t2)}
+
+/* WATCHLIST MINI */
+.wl-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid var(--brd);cursor:pointer;transition:.15s}
+.wl-item:hover{background:var(--bg3)}
+.wl-item .wl-sym{font-weight:700;font-size:12px}.wl-item .wl-prc{font-family:var(--mono);font-size:12px}
+
+/* PULSE ANIMATION */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 1.5s infinite}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  #app{grid-template-columns:1fr}
+  #sidePanel{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP TICKER BAR -->
+<div id="topBar"><div id="ticker"></div></div>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="logo">TADAWUL <span style="color:var(--gld)">OPTIONS</span> <span class="pro">PRO</span></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <input id="symInput" placeholder="AAPL" value="AAPL" onkeydown="if(event.key==='Enter')loadSymbol(this.value.toUpperCase())">
+    <div class="hdr-tabs">
+      <button class="hdr-tab active" onclick="switchView('chart')">📊 الشارت</button>
+      <button class="hdr-tab" onclick="switchView('scanner')">🔍 الماسح</button>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span id="clock" style="font-family:var(--mono);font-size:12px;color:var(--t3)"></span>
+    <span id="mktStatus" class="badge badge-grn">السوق مفتوح</span>
+  </div>
+</div>
+
+<!-- APP LAYOUT -->
+<div id="app">
+  <!-- MAIN AREA -->
+  <div id="mainArea">
+    <!-- INFO BAR -->
+    <div id="infoBar">
+      <div>
+        <div style="font-size:11px;color:var(--t3)" id="stockName">APPLE INC</div>
+        <div class="info-price" id="stockPrice">$0.00</div>
+      </div>
+      <div class="info-change" id="stockChange">0.00 (0.00%)</div>
+      <div class="info-divider"></div>
+      <div class="info-stat"><span class="lbl">أعلى</span><span class="val" id="sHigh">-</span></div>
+      <div class="info-stat"><span class="lbl">أدنى</span><span class="val" id="sLow">-</span></div>
+      <div class="info-stat"><span class="lbl">حجم</span><span class="val" id="sVol">-</span></div>
+      <div class="info-divider"></div>
+      <div class="info-stat"><span class="lbl">IV Rank</span><span class="val" id="sIVR">-</span></div>
+      <div class="info-stat"><span class="lbl">P/C Ratio</span><span class="val" id="sPCR">-</span></div>
+      <div class="info-stat"><span class="lbl">GEX</span><span class="val" id="sGEX">-</span></div>
+    </div>
+
+    <!-- CHART -->
+    <div id="chartWrap">
+      <div id="chartHeader">
+        <span style="font-weight:700;font-size:13px;color:var(--gld)" id="chartSym">AAPL</span>
+        <div style="display:flex;gap:2px">
+          <button class="ch-btn" onclick="setTF('5m')">5د</button>
+          <button class="ch-btn active" onclick="setTF('15m')">15د</button>
+          <button class="ch-btn" onclick="setTF('1h')">ساعة</button>
+          <button class="ch-btn" onclick="setTF('1d')">يوم</button>
+          <button class="ch-btn" onclick="setTF('1wk')">أسبوع</button>
+        </div>
+        <div style="display:flex;gap:2px">
+          <button class="ch-btn active" onclick="setChartType('candle')">شموع</button>
+          <button class="ch-btn" onclick="setChartType('line')">خط</button>
+        </div>
+        <div style="display:flex;gap:2px;margin-right:auto">
+          <button class="ch-btn" onclick="toggleIndicator('ema')">EMA</button>
+          <button class="ch-btn" onclick="toggleIndicator('bb')">BB</button>
+          <button class="ch-btn" onclick="toggleIndicator('vwap')">VWAP</button>
+          <button class="ch-btn" onclick="toggleIndicator('gamma')">جدار γ</button>
+        </div>
+      </div>
+      <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <!-- TABS -->
+    <div id="tabsWrap">
+      <div id="tabsHeader">
+        <button class="tab-btn active" onclick="switchTab('options')">⛓ سلسلة الخيارات</button>
+        <button class="tab-btn" onclick="switchTab('gamma')">🧱 جدار الغاما</button>
+        <button class="tab-btn" onclick="switchTab('greeks')">Δ اليونانيات</button>
+        <button class="tab-btn" onclick="switchTab('strategy')">📐 محاكي الصفقات</button>
+        <button class="tab-btn" onclick="switchTab('feargreed')">😱 خوف/طمع</button>
+        <button class="tab-btn" onclick="switchTab('flow')">🌊 تدفق السيولة</button>
+      </div>
+      <div id="tabContent"></div>
+    </div>
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div id="sidePanel">
+    <!-- WATCHLIST -->
+    <div class="sp-section">
+      <div class="sp-title">⭐ المراقبة</div>
+      <div id="watchlist"></div>
+    </div>
+
+    <!-- LIVE FLOW -->
+    <div class="sp-section">
+      <div class="sp-title">🔴 تدفق مباشر <span class="pulse" style="color:var(--red);font-size:8px">●</span></div>
+      <div id="liveFlow"></div>
+    </div>
+
+    <!-- AI CHAT -->
+    <div class="sp-section" style="flex:1;display:flex;flex-direction:column;padding:0">
+      <div class="sp-title" style="padding:12px 12px 0">🤖 المساعد الذكي</div>
+      <div class="ai-quick">
+        <button class="ai-qbtn" onclick="askAI('ما أقوى 3 أسهم عليها تراكم سيولة؟')">أقوى سيولة</button>
+        <button class="ai-qbtn" onclick="askAI('أين جدار الغاما لـ '+STATE.sym+'؟')">جدار γ</button>
+        <button class="ai-qbtn" onclick="askAI('تحليل Greeks لـ '+STATE.sym)">Greeks</button>
+        <button class="ai-qbtn" onclick="askAI('هل السوق متفائل أم يتحوط؟')">حالة السوق</button>
+        <button class="ai-qbtn" onclick="askAI('أفضل استراتيجية خيارات لـ '+STATE.sym+' الآن')">أفضل استراتيجية</button>
+      </div>
+      <div id="aiChat">
+        <div id="aiMessages">
+          <div class="ai-msg bot">مرحباً! أنا مساعدك الذكي. اسألني عن تحليل الخيارات، جدار الغاما، أو أي سؤال عن السوق 🎯</div>
+        </div>
+        <div id="aiInputWrap">
+          <textarea id="aiInput" placeholder="اكتب سؤالك..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+          <button id="aiSend" onclick="sendAI()">↵</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================
+   TADAWUL OPTIONS PRO — CORE ENGINE
+   ============================================ */
+
+// ===== STATE =====
+const STATE = {
+  sym: 'AAPL',
+  candles: [],
+  calls: [],
+  puts: [],
+  expirations: [],
+  expiry: null,
+  price: 0,
+  tf: '15m',
+  range: '5d',
+  chartType: 'candle',
+  indicators: { ema: true, bb: false, vwap: true, gamma: true },
+  activeTab: 'options',
+  watchlist: ['AAPL','TSLA','NVDA','MSFT','AMZN','META','GOOGL','SPY','QQQ','AMD'],
+  wlData: {},
+  stratLegs: [],
+  aiHistory: [],
+  flowAlerts: [],
+  gammaLevels: [],
+  greeksAggregate: { delta: 0, gamma: 0, vega: 0, theta: 0 },
+  pcRatio: 1,
+  ivRank: 50,
+  fearGreed: 50
+};
+
+const TF_MAP = { '5m': { range:'1d', interval:'5m' }, '15m': { range:'5d', interval:'15m' },
+  '1h': { range:'1mo', interval:'60m' }, '1d': { range:'6mo', interval:'1d' }, '1wk': { range:'2y', interval:'1wk' } };
+
+// ===== UTILITIES =====
+const $ = id => document.getElementById(id);
+const fN = (n, d=2) => n ? Number(n).toFixed(d) : '-';
+const fK = n => { if(!n) return '-'; if(n>=1e9) return (n/1e9).toFixed(1)+'B'; if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return n; };
+const clr = v => v > 0 ? 'var(--grn)' : v < 0 ? 'var(--red)' : 'var(--t2)';
+
+// ===== BLACK-SCHOLES ENGINE =====
+function normCDF(x) {
+  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429;
+  const p=0.3275911, sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.sqrt(2);
+  const t = 1 / (1 + p * x);
+  const y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return 0.5 * (1 + sign * y);
+}
+
+function bsGreeks(S, K, T, r, sigma, type) {
+  if (T <= 0 || sigma <= 0) return { delta:0, gamma:0, theta:0, vega:0, rho:0 };
+  const d1 = (Math.log(S/K) + (r + sigma*sigma/2)*T) / (sigma*Math.sqrt(T));
+  const d2 = d1 - sigma*Math.sqrt(T);
+  const nd1 = Math.exp(-d1*d1/2) / Math.sqrt(2*Math.PI);
+  const gamma = nd1 / (S * sigma * Math.sqrt(T));
+  const vega = S * nd1 * Math.sqrt(T) / 100;
+  let delta, theta;
+  if (type === 'call') {
+    delta = normCDF(d1);
+    theta = (-(S*nd1*sigma)/(2*Math.sqrt(T)) - r*K*Math.exp(-r*T)*normCDF(d2)) / 365;
+  } else {
+    delta = normCDF(d1) - 1;
+    theta = (-(S*nd1*sigma)/(2*Math.sqrt(T)) + r*K*Math.exp(-r*T)*normCDF(-d2)) / 365;
+  }
+  return { delta: +delta.toFixed(4), gamma: +gamma.toFixed(6), theta: +theta.toFixed(4), vega: +vega.toFixed(4) };
+}
+
+// ===== GAMMA EXPOSURE CALCULATION =====
+function calcGammaExposure(calls, puts, spotPrice) {
+  const levels = {};
+  const r = 0.05; // risk-free rate
+  
+  [...calls, ...puts].forEach(opt => {
+    const K = opt.strike;
+    const T = opt.expiry ? Math.max((opt.expiry*1000 - Date.now()) / (365.25*24*3600*1000), 1/365) : 30/365;
+    const sigma = opt.iv || 0.3;
+    const oi = opt.oi || 0;
+    const type = calls.includes(opt) ? 'call' : 'put';
+    const g = bsGreeks(spotPrice, K, T, r, sigma, type);
+    const gex = g.gamma * oi * 100 * spotPrice * spotPrice * 0.01;
+    const sign = type === 'call' ? 1 : -1;
+    if (!levels[K]) levels[K] = { strike: K, callGEX: 0, putGEX: 0, netGEX: 0, callOI: 0, putOI: 0 };
+    if (type === 'call') { levels[K].callGEX += gex; levels[K].callOI += oi; }
+    else { levels[K].putGEX -= gex; levels[K].putOI += oi; }
+    levels[K].netGEX = levels[K].callGEX + levels[K].putGEX;
+  });
+
+  return Object.values(levels).sort((a, b) => a.strike - b.strike);
+}
+
+// ===== AGGREGATE GREEKS =====
+function calcAggregateGreeks(calls, puts, spotPrice) {
+  let totalDelta = 0, totalGamma = 0, totalVega = 0, totalTheta = 0;
+  let callVol = 0, putVol = 0, callOI = 0, putOI = 0;
+  const r = 0.05;
+
+  const process = (arr, type) => {
+    arr.forEach(opt => {
+      const T = opt.expiry ? Math.max((opt.expiry*1000 - Date.now()) / (365.25*24*3600*1000), 1/365) : 30/365;
+      const sigma = opt.iv || 0.3;
+      const g = bsGreeks(spotPrice, opt.strike, T, r, sigma, type);
+      const weight = opt.oi || 1;
+      totalDelta += g.delta * weight;
+      totalGamma += g.gamma * weight;
+      totalVega += g.vega * weight;
+      totalTheta += g.theta * weight;
+      if (type === 'call') { callVol += opt.vol; callOI += opt.oi; }
+      else { putVol += opt.vol; putOI += opt.oi; }
+    });
+  };
+
+  process(calls, 'call');
+  process(puts, 'put');
+
+  STATE.pcRatio = callVol > 0 ? +(putVol / callVol).toFixed(2) : 1;
+  STATE.greeksAggregate = {
+    delta: +totalDelta.toFixed(0),
+    gamma: +totalGamma.toFixed(2),
+    vega: +totalVega.toFixed(0),
+    theta: +totalTheta.toFixed(0)
+  };
+
+  // Calculate Fear/Greed
+  const pcScore = Math.min(100, Math.max(0, STATE.pcRatio > 1.2 ? 20 : STATE.pcRatio < 0.7 ? 80 : 50 + (0.95 - STATE.pcRatio) * 100));
+  const avgIV = [...calls, ...puts].reduce((s, o) => s + (o.iv || 0.3), 0) / Math.max(1, calls.length + puts.length);
+  const ivScore = Math.min(100, Math.max(0, 100 - avgIV * 200));
+  const deltaScore = totalDelta > 0 ? Math.min(100, 50 + totalDelta / 100) : Math.max(0, 50 + totalDelta / 100);
+  STATE.fearGreed = Math.round(pcScore * 0.35 + ivScore * 0.35 + deltaScore * 0.3);
+  STATE.ivRank = Math.round(avgIV * 200);
+}
+
+// ===== STRATEGY P/L CALCULATOR =====
+function calcStrategyPL(legs, spotPrice, range = 0.2) {
+  const minP = spotPrice * (1 - range), maxP = spotPrice * (1 + range);
+  const points = [];
+  for (let p = minP; p <= maxP; p += (maxP - minP) / 200) {
+    let pl = 0;
+    legs.forEach(leg => {
+      const { type, strike, premium, qty, side } = leg;
+      const mult = side === 'buy' ? 1 : -1;
+      let intrinsic;
+      if (type === 'call') intrinsic = Math.max(0, p - strike);
+      else intrinsic = Math.max(0, strike - p);
+      pl += (intrinsic - premium) * qty * mult * 100;
+    });
+    points.push({ price: p, pl });
+  }
+  const maxProfit = Math.max(...points.map(p => p.pl));
+  const maxLoss = Math.min(...points.map(p => p.pl));
+  const breakevens = [];
+  for (let i = 1; i < points.length; i++) {
+    if ((points[i-1].pl < 0 && points[i].pl >= 0) || (points[i-1].pl >= 0 && points[i].pl < 0)) {
+      breakevens.push(+points[i].price.toFixed(2));
+    }
+  }
+  return { points, maxProfit, maxLoss, breakevens };
+}
+
+// ===== DATA FETCHING =====
+async function fetchStock(sym) {
+  try {
+    const { range, interval } = TF_MAP[STATE.tf];
+    const r = await fetch(`/api/stock?s=${sym}&range=${range}&interval=${interval}`);
+    if (!r.ok) throw new Error('Stock fetch failed');
+    return await r.json();
+  } catch(e) { console.error('Stock fetch:', e); return null; }
+}
+
+async function fetchOptions(sym, date) {
+  try {
+    let url = `/api/options?s=${sym}`;
+    if (date) url += `&date=${date}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Options fetch failed');
+    return await r.json();
+  } catch(e) { console.error('Options fetch:', e); return null; }
+}
+
+// ===== LOAD SYMBOL =====
+async function loadSymbol(sym) {
+  STATE.sym = sym;
+  $('symInput').value = sym;
+  $('chartSym').textContent = sym;
+
+  // Fetch stock data
+  const sd = await fetchStock(sym);
+  if (sd) {
+    STATE.candles = sd.candles || [];
+    STATE.price = sd.price;
+    $('stockName').textContent = sd.name || sym;
+    $('stockPrice').textContent = '$' + fN(sd.price);
+    $('stockPrice').style.color = sd.change >= 0 ? 'var(--grn)' : 'var(--red)';
+    const chEl = $('stockChange');
+    chEl.textContent = `${sd.change >= 0 ? '+' : ''}${fN(sd.change)} (${sd.changePct}%)`;
+    chEl.style.background = sd.change >= 0 ? 'var(--grn3)' : 'var(--red3)';
+    chEl.style.color = sd.change >= 0 ? 'var(--grn)' : 'var(--red)';
+    $('sHigh').textContent = '$' + fN(sd.high);
+    $('sLow').textContent = '$' + fN(sd.low);
+    $('sVol').textContent = fK(sd.vol);
+    drawChart();
+  }
+
+  // Fetch options
+  const od = await fetchOptions(sym);
+  if (od) {
+    STATE.calls = od.calls || [];
+    STATE.puts = od.puts || [];
+    STATE.expirations = od.expirations || [];
+    STATE.expiry = od.expiry;
+
+    // Calc gamma & greeks
+    STATE.gammaLevels = calcGammaExposure(STATE.calls, STATE.puts, STATE.price);
+    calcAggregateGreeks(STATE.calls, STATE.puts, STATE.price);
+
+    $('sIVR').textContent = STATE.ivRank + '%';
+    $('sPCR').textContent = STATE.pcRatio;
+    const totalGEX = STATE.gammaLevels.reduce((s, l) => s + l.netGEX, 0);
+    $('sGEX').textContent = fK(Math.abs(totalGEX));
+    $('sGEX').style.color = totalGEX >= 0 ? 'var(--grn)' : 'var(--red)';
+
+    generateFlowAlerts();
+    switchTab(STATE.activeTab);
+  }
+
+  // Update watchlist data
+  STATE.wlData[sym] = { price: sd?.price, change: sd?.change, changePct: sd?.changePct };
+}
+
+// ===== GENERATE SIMULATED FLOW ALERTS =====
+function generateFlowAlerts() {
+  const alerts = [];
+  const types = ['SWEEP', 'BLOCK', 'SPLIT', 'UNUSUAL'];
+  const sides = ['CALL', 'PUT'];
+
+  [...STATE.calls, ...STATE.puts].forEach(opt => {
+    if (opt.vol > opt.oi * 1.5 && opt.vol > 500) {
+      const isSweep = opt.vol > opt.oi * 3;
+      alerts.push({
+        sym: STATE.sym,
+        strike: opt.strike,
+        type: isSweep ? 'SWEEP' : opt.vol > 2000 ? 'BLOCK' : 'UNUSUAL',
+        side: STATE.calls.includes(opt) ? 'CALL' : 'PUT',
+        vol: opt.vol,
+        oi: opt.oi,
+        premium: (opt.ask || opt.last) * opt.vol * 100,
+        bullish: STATE.calls.includes(opt),
+        time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
+      });
+    }
+  });
+
+  alerts.sort((a, b) => b.premium - a.premium);
+  STATE.flowAlerts = alerts.slice(0, 15);
+  renderLiveFlow();
+}
+
+// ===== CHART DRAWING =====
+function drawChart() {
+  const canvas = $('chartCanvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const data = STATE.candles;
+  if (!data.length) { ctx.fillStyle = '#334155'; ctx.font = '14px Cairo'; ctx.fillText('جاري التحميل...', W/2 - 50, H/2); return; }
+
+  const pad = { t: 10, r: 60, b: 30, l: 10 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+  const prices = data.flatMap(c => [c.h, c.l]);
+  let minP = Math.min(...prices), maxP = Math.max(...prices);
+  const pRange = maxP - minP || 1;
+  minP -= pRange * 0.05; maxP += pRange * 0.05;
+  const pxPerCandle = cW / data.length;
+
+  const toX = i => pad.l + i * pxPerCandle + pxPerCandle / 2;
+  const toY = p => pad.t + (1 - (p - minP) / (maxP - minP)) * cH;
+
+  // Background
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 6; i++) {
+    const y = pad.t + (cH / 5) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+    const price = maxP - (maxP - minP) * (i / 5);
+    ctx.fillStyle = '#64748b'; ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'left'; ctx.fillText('$' + fN(price), W - pad.r + 4, y + 4);
+  }
+
+  // Gamma wall zones on chart
+  if (STATE.indicators.gamma && STATE.gammaLevels.length) {
+    STATE.gammaLevels.forEach(gl => {
+      if (gl.strike >= minP && gl.strike <= maxP && Math.abs(gl.netGEX) > 0) {
+        const y = toY(gl.strike);
+        const intensity = Math.min(1, Math.abs(gl.netGEX) / Math.max(...STATE.gammaLevels.map(g => Math.abs(g.netGEX))) * 0.7);
+        ctx.strokeStyle = gl.netGEX > 0 ? `rgba(0,230,118,${intensity})` : `rgba(255,23,68,${intensity})`;
+        ctx.lineWidth = gl.netGEX > 0 ? 2 : 1.5;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = gl.netGEX > 0 ? 'rgba(0,230,118,.8)' : 'rgba(255,23,68,.8)';
+        ctx.font = '9px JetBrains Mono';
+        ctx.fillText('γ $' + fN(gl.strike, 0), W - pad.r - 55, y - 3);
+      }
+    });
+  }
+
+  // EMA
+  if (STATE.indicators.ema && data.length > 20) {
+    [9, 21, 50].forEach((period, idx) => {
+      const colors = ['#ffc107', '#2196f3', '#ab47bc'];
+      const ema = calcEMA(data.map(c => c.c), period);
+      ctx.strokeStyle = colors[idx]; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ema.forEach((v, i) => { if (v && i >= data.length - ema.length) { const x = toX(i - (data.length - ema.length)); i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v)); } });
+      ctx.stroke();
+    });
+  }
+
+  // Bollinger Bands
+  if (STATE.indicators.bb && data.length > 20) {
+    const closes = data.map(c => c.c);
+    const bb = calcBB(closes, 20);
+    ctx.strokeStyle = 'rgba(171,71,188,.5)'; ctx.lineWidth = 1;
+    ['upper', 'lower'].forEach(band => {
+      ctx.beginPath();
+      bb[band].forEach((v, i) => { if (v) { const x = toX(i); i === 0 || !bb[band][i-1] ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v)); } });
+      ctx.stroke();
+    });
+    // Fill between
+    ctx.fillStyle = 'rgba(171,71,188,.04)';
+    ctx.beginPath();
+    bb.upper.forEach((v, i) => { if (v) { const x = toX(i); i === 0 || !bb.upper[i-1] ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v)); } });
+    for (let i = bb.lower.length - 1; i >= 0; i--) { if (bb.lower[i]) ctx.lineTo(toX(i), toY(bb.lower[i])); }
+    ctx.fill();
+  }
+
+  // VWAP
+  if (STATE.indicators.vwap && data.length > 5) {
+    const vwap = calcVWAP(data);
+    ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    vwap.forEach((v, i) => { if (v) { const x = toX(i); i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v)); } });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Candles
+  data.forEach((c, i) => {
+    const x = toX(i);
+    const bull = c.c >= c.o;
+    const bodyTop = toY(Math.max(c.o, c.c)), bodyBot = toY(Math.min(c.o, c.c));
+    const bodyH = Math.max(1, bodyBot - bodyTop);
+    const candleW = Math.max(2, pxPerCandle * 0.7);
+
+    // Wick
+    ctx.strokeStyle = bull ? '#00e676' : '#ff1744'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, toY(c.h)); ctx.lineTo(x, toY(c.l)); ctx.stroke();
+
+    // Body
+    ctx.fillStyle = bull ? '#00e676' : '#ff1744';
+    if (!bull) { ctx.fillRect(x - candleW/2, bodyTop, candleW, bodyH); }
+    else { ctx.strokeStyle = '#00e676'; ctx.lineWidth = 1; ctx.strokeRect(x - candleW/2, bodyTop, candleW, bodyH); }
+  });
+
+  // Current price line
+  if (STATE.price) {
+    const y = toY(STATE.price);
+    ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1; ctx.setLineDash([4, 2]);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#ffd700'; ctx.fillRect(W - pad.r, y - 10, 55, 20);
+    ctx.fillStyle = '#0a0e17'; ctx.font = 'bold 10px JetBrains Mono'; ctx.textAlign = 'left';
+    ctx.fillText('$' + fN(STATE.price), W - pad.r + 4, y + 4);
+  }
+
+  // Time labels
+  ctx.fillStyle = '#64748b'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'center';
+  const labelInterval = Math.ceil(data.length / 8);
+  data.forEach((c, i) => {
+    if (i % labelInterval === 0) {
+      const d = new Date(c.t);
+      const lbl = STATE.tf === '1d' || STATE.tf === '1wk' ?
+        d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) :
+        d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+      ctx.fillText(lbl, toX(i), H - 8);
+    }
+  });
+
+  // Volume bars at bottom
+  const maxVol = Math.max(...data.map(c => c.v || 0));
+  data.forEach((c, i) => {
+    if (!c.v) return;
+    const x = toX(i);
+    const barH = (c.v / maxVol) * 40;
+    ctx.fillStyle = c.c >= c.o ? 'rgba(0,230,118,.15)' : 'rgba(255,23,68,.15)';
+    ctx.fillRect(x - pxPerCandle * 0.35, H - pad.b - barH, pxPerCandle * 0.7, barH);
+  });
+}
+
+// ===== TECHNICAL INDICATORS =====
+function calcEMA(data, period) {
+  const k = 2 / (period + 1);
+  const ema = [data[0]];
+  for (let i = 1; i < data.length; i++) ema.push(data[i] * k + ema[i-1] * (1 - k));
+  return ema;
+}
+
+function calcBB(data, period, mult = 2) {
+  const result = { upper: [], middle: [], lower: [] };
+  for (let i = 0; i < data.length; i++) {
+    if (i < period - 1) { result.upper.push(null); result.middle.push(null); result.lower.push(null); continue; }
+    const slice = data.slice(i - period + 1, i + 1);
+    const mean = slice.reduce((a, b) => a + b) / period;
+    const std = Math.sqrt(slice.reduce((s, v) => s + (v - mean) ** 2, 0) / period);
+    result.middle.push(mean); result.upper.push(mean + mult * std); result.lower.push(mean - mult * std);
+  }
+  return result;
+}
+
+function calcVWAP(candles) {
+  let cumVP = 0, cumV = 0;
+  return candles.map(c => {
+    const tp = (c.h + c.l + c.c) / 3;
+    cumVP += tp * (c.v || 0); cumV += (c.v || 0);
+    return cumV > 0 ? cumVP / cumV : null;
+  });
+}
+
+// ===== TAB RENDERING =====
+function switchTab(tab) {
+  STATE.activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['options','gamma','greeks','strategy','feargreed','flow'][i] === tab);
+  });
+  const el = $('tabContent');
+  switch(tab) {
+    case 'options': renderOptionsChain(el); break;
+    case 'gamma': renderGammaWall(el); break;
+    case 'greeks': renderGreeks(el); break;
+    case 'strategy': renderStrategyBuilder(el); break;
+    case 'feargreed': renderFearGreed(el); break;
+    case 'flow': renderFlowTab(el); break;
+  }
+}
+
+// ===== OPTIONS CHAIN =====
+function renderOptionsChain(el) {
+  if (!STATE.calls.length && !STATE.puts.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">⏳ جاري تحميل بيانات الخيارات...</div>';
+    return;
+  }
+
+  // Expiry selector
+  let expiryHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">';
+  expiryHTML += '<span style="font-size:11px;color:var(--t3)">الاستحقاق:</span>';
+  STATE.expirations.slice(0, 8).forEach(exp => {
+    const d = new Date(exp * 1000);
+    const label = d.toLocaleDateString('en', { month: 'short', day: 'numeric', year: '2-digit' });
+    const active = exp === STATE.expiry;
+    expiryHTML += `<button class="ch-btn${active ? ' active' : ''}" onclick="changeExpiry(${exp})">${label}</button>`;
+  });
+  expiryHTML += '</div>';
+
+  // Find ATM
+  const allStrikes = [...new Set([...STATE.calls, ...STATE.puts].map(o => o.strike))].sort((a, b) => a - b);
+  const atm = allStrikes.reduce((best, s) => Math.abs(s - STATE.price) < Math.abs(best - STATE.price) ? s : best, allStrikes[0]);
+  const nearStrikes = allStrikes.filter(s => Math.abs(allStrikes.indexOf(s) - allStrikes.indexOf(atm)) <= 12);
+
+  const maxVol = Math.max(...[...STATE.calls, ...STATE.puts].map(o => o.vol || 0), 1);
+  const maxOI = Math.max(...[...STATE.calls, ...STATE.puts].map(o => o.oi || 0), 1);
+
+  let html = expiryHTML + `<table class="opt-table">
+    <tr>
+      <th colspan="7" style="color:var(--grn);border-bottom:2px solid var(--grn)">📈 CALLS</th>
+      <th style="color:var(--gld)">Strike</th>
+      <th colspan="7" style="color:var(--red);border-bottom:2px solid var(--red)">📉 PUTS</th>
+    </tr>
+    <tr>
+      <th>OI</th><th>Vol</th><th>IV</th><th>Bid</th><th>Ask</th><th>Last</th><th>Δ</th>
+      <th class="strike-col">💰</th>
+      <th>Δ</th><th>Last</th><th>Bid</th><th>Ask</th><th>IV</th><th>Vol</th><th>OI</th>
+    </tr>`;
+
+  nearStrikes.forEach(strike => {
+    const call = STATE.calls.find(c => c.strike === strike) || {};
+    const put = STATE.puts.find(p => p.strike === strike) || {};
+    const isATM = strike === atm;
+    const callITM = strike < STATE.price;
+    const putITM = strike > STATE.price;
+    const cG = bsGreeks(STATE.price, strike, 30/365, 0.05, call.iv || 0.3, 'call');
+    const pG = bsGreeks(STATE.price, strike, 30/365, 0.05, put.iv || 0.3, 'put');
+
+    const volBar = (v, color) => `<span class="vol-bar" style="width:${Math.min(40, v/maxVol*40)}px;background:${color}"></span>${fK(v)}`;
+
+    html += `<tr style="${isATM ? 'background:rgba(255,215,0,.06);font-weight:700' : ''}">
+      <td class="${callITM ? 'call-itm' : ''}">${fK(call.oi)}</td>
+      <td class="${callITM ? 'call-itm' : ''}">${volBar(call.vol || 0, 'var(--grn)')}</td>
+      <td class="${callITM ? 'call-itm' : ''}">${call.iv ? (call.iv * 100).toFixed(0) + '%' : '-'}</td>
+      <td class="${callITM ? 'call-itm' : ''}" style="color:var(--grn)">${fN(call.bid)}</td>
+      <td class="${callITM ? 'call-itm' : ''}" style="color:var(--red)">${fN(call.ask)}</td>
+      <td class="${callITM ? 'call-itm' : ''}" style="font-weight:700">${fN(call.last)}</td>
+      <td class="${callITM ? 'call-itm' : ''}" style="color:var(--cyn)">${cG.delta.toFixed(2)}</td>
+      <td class="strike-col" style="${isATM ? 'background:rgba(255,215,0,.15)' : ''}">
+        $${fN(strike, strike >= 100 ? 0 : 2)}
+        ${isATM ? '<br><span style="font-size:8px;color:var(--gld)">ATM</span>' : ''}
+      </td>
+      <td class="${putITM ? 'put-itm' : ''}" style="color:var(--cyn)">${pG.delta.toFixed(2)}</td>
+      <td class="${putITM ? 'put-itm' : ''}" style="font-weight:700">${fN(put.last)}</td>
+      <td class="${putITM ? 'put-itm' : ''}" style="color:var(--grn)">${fN(put.bid)}</td>
+      <td class="${putITM ? 'put-itm' : ''}" style="color:var(--red)">${fN(put.ask)}</td>
+      <td class="${putITM ? 'put-itm' : ''}">${put.iv ? (put.iv * 100).toFixed(0) + '%' : '-'}</td>
+      <td class="${putITM ? 'put-itm' : ''}">${volBar(put.vol || 0, 'var(--red)')}</td>
+      <td class="${putITM ? 'put-itm' : ''}">${fK(put.oi)}</td>
+    </tr>`;
+  });
+
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+// ===== GAMMA WALL =====
+function renderGammaWall(el) {
+  const levels = STATE.gammaLevels;
+  if (!levels.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">لا توجد بيانات غاما</div>'; return; }
+
+  el.innerHTML = `
+    <div style="padding:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:14px;font-weight:700">🧱 جدار الغاما (Gamma Exposure)</span>
+        <div class="gamma-legend">
+          <span><span class="gamma-dot" style="background:var(--grn)"></span> Call GEX (+)</span>
+          <span><span class="gamma-dot" style="background:var(--red)"></span> Put GEX (−)</span>
+          <span><span class="gamma-dot" style="background:var(--gld)"></span> السعر الحالي</span>
+        </div>
+      </div>
+      <canvas id="gammaCanvas"></canvas>
+      <div class="greeks-summary" style="margin-top:12px">
+        <strong style="color:var(--gld)">📊 قراءة جدار الغاما:</strong><br>
+        ${getGammaAnalysis(levels)}
+      </div>
+    </div>`;
+
+  setTimeout(() => drawGammaChart(levels), 50);
+}
+
+function getGammaAnalysis(levels) {
+  const maxPos = levels.reduce((m, l) => l.netGEX > m.netGEX ? l : m, levels[0]);
+  const maxNeg = levels.reduce((m, l) => l.netGEX < m.netGEX ? l : m, levels[0]);
+  const totalNet = levels.reduce((s, l) => s + l.netGEX, 0);
+  const gammaFlip = levels.find((l, i) => i > 0 && levels[i-1].netGEX * l.netGEX < 0);
+
+  let analysis = '';
+  analysis += `⬆️ <strong>أقوى جدار مقاومة:</strong> $${fN(maxPos.strike, 0)} — صُناع السوق سيضطرون للبيع هنا مما يخلق سقف سعري<br>`;
+  analysis += `⬇️ <strong>أقوى جدار دعم:</strong> $${fN(maxNeg.strike, 0)} — صُناع السوق سيشترون هنا مما يخلق أرضية سعرية<br>`;
+  if (gammaFlip) analysis += `🔄 <strong>نقطة Gamma Flip:</strong> $${fN(gammaFlip.strike, 0)} — فوقها حركة مكبوتة، تحتها حركة انفجارية<br>`;
+  analysis += `📈 <strong>الاتجاه العام:</strong> ${totalNet > 0 ? 'GEX موجب — السوق مستقر، صُناع السوق يبيعون القمم ويشترون القيعان' : 'GEX سالب — السوق متقلب، توقع تحركات عنيفة'}`;
+  return analysis;
+}
+
+function drawGammaChart(levels) {
+  const canvas = $('gammaCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = { t: 20, r: 60, b: 35, l: 10 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+
+  // Filter to meaningful levels (near ATM)
+  const nearLevels = levels.filter(l => Math.abs(l.strike - STATE.price) / STATE.price < 0.15);
+  if (!nearLevels.length) return;
+
+  const maxGEX = Math.max(...nearLevels.map(l => Math.abs(l.netGEX)), 1);
+  const barW = Math.min(30, cW / nearLevels.length * 0.6);
+
+  ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, W, H);
+
+  // Zero line
+  const zeroY = pad.t + cH / 2;
+  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, zeroY); ctx.lineTo(W - pad.r, zeroY); ctx.stroke();
+
+  nearLevels.forEach((l, i) => {
+    const x = pad.l + (i / nearLevels.length) * cW + (cW / nearLevels.length / 2);
+    const barH = (Math.abs(l.netGEX) / maxGEX) * (cH / 2);
+    const y = l.netGEX >= 0 ? zeroY - barH : zeroY;
+
+    // Call portion
+    const callH = (l.callGEX / maxGEX) * (cH / 2);
+    if (callH > 0) {
+      const grad = ctx.createLinearGradient(0, zeroY - callH, 0, zeroY);
+      grad.addColorStop(0, 'rgba(0,230,118,.8)'); grad.addColorStop(1, 'rgba(0,230,118,.2)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x - barW/2, zeroY - callH, barW/2 - 1, callH);
+    }
+
+    // Put portion
+    const putH = (Math.abs(l.putGEX) / maxGEX) * (cH / 2);
+    if (putH > 0) {
+      const grad = ctx.createLinearGradient(0, zeroY, 0, zeroY + putH);
+      grad.addColorStop(0, 'rgba(255,23,68,.2)'); grad.addColorStop(1, 'rgba(255,23,68,.8)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x + 1, zeroY, barW/2 - 1, putH);
+    }
+
+    // Net GEX line marker
+    ctx.fillStyle = l.netGEX >= 0 ? 'var(--grn)' : 'var(--red)';
+    ctx.beginPath();
+    ctx.arc(x, l.netGEX >= 0 ? zeroY - barH - 4 : zeroY + barH + 4, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Strike label
+    ctx.fillStyle = l.strike === Math.round(STATE.price) ? '#ffd700' : '#64748b';
+    ctx.font = `${l.strike === Math.round(STATE.price) ? 'bold ' : ''}9px JetBrains Mono`;
+    ctx.textAlign = 'center';
+    ctx.save(); ctx.translate(x, H - 8); ctx.rotate(-0.5);
+    ctx.fillText('$' + fN(l.strike, 0), 0, 0);
+    ctx.restore();
+
+    // Current price marker
+    if (Math.abs(l.strike - STATE.price) === Math.min(...nearLevels.map(nl => Math.abs(nl.strike - STATE.price)))) {
+      ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#ffd700'; ctx.font = 'bold 10px Cairo';
+      ctx.fillText('السعر ▼', x, pad.t - 2);
+    }
+  });
+
+  // Y-axis labels
+  ctx.fillStyle = '#64748b'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'left';
+  ctx.fillText('+GEX', W - pad.r + 4, pad.t + 10);
+  ctx.fillText('−GEX', W - pad.r + 4, H - pad.b - 5);
+  ctx.fillText('0', W - pad.r + 4, zeroY + 4);
+}
+
+// ===== GREEKS DASHBOARD =====
+function renderGreeks(el) {
+  const g = STATE.greeksAggregate;
+  const sentiment = g.delta > 0 ? { txt: 'صعودي — السوق متفائل', clr: 'var(--grn)', icon: '🟢' } :
+    g.delta < -500 ? { txt: 'هبوطي قوي — تحوط مكثف', clr: 'var(--red)', icon: '🔴' } :
+    { txt: 'محايد — ترقب', clr: 'var(--ylw)', icon: '🟡' };
+
+  const maxDelta = 5000, maxGamma = 100, maxVega = 5000, maxTheta = 5000;
+
+  el.innerHTML = `
+    <div class="greeks-grid">
+      <div class="greek-card">
+        <div class="gk-name">Delta (Δ)</div>
+        <div class="gk-val" style="color:${g.delta >= 0 ? 'var(--grn)' : 'var(--red)'}">${g.delta >= 0 ? '+' : ''}${fK(g.delta)}</div>
+        <div class="gk-dir" style="color:${g.delta >= 0 ? 'var(--grn)' : 'var(--red)'}">
+          ${g.delta >= 0 ? '↑ المؤسسات تراهن على الصعود' : '↓ تحوط ضد الهبوط'}
+        </div>
+        <div class="gk-bar"><div class="gk-fill" style="width:${Math.min(100, Math.abs(g.delta)/maxDelta*100)}%;background:${g.delta >= 0 ? 'var(--grn)' : 'var(--red)'}"></div></div>
+      </div>
+      <div class="greek-card">
+        <div class="gk-name">Gamma (Γ)</div>
+        <div class="gk-val" style="color:var(--cyn)">${fN(g.gamma)}</div>
+        <div class="gk-dir" style="color:var(--cyn)">
+          ${g.gamma > 50 ? '⚡ حساسية عالية — حركة سريعة متوقعة' : '🌊 حساسية طبيعية'}
+        </div>
+        <div class="gk-bar"><div class="gk-fill" style="width:${Math.min(100, g.gamma/maxGamma*100)}%;background:var(--cyn)"></div></div>
+      </div>
+      <div class="greek-card">
+        <div class="gk-name">Vega (ν)</div>
+        <div class="gk-val" style="color:var(--prp)">${fK(g.vega)}</div>
+        <div class="gk-dir" style="color:var(--prp)">
+          ${g.vega > 2000 ? '🌋 تقلب مرتفع — العقود غالية' : '😌 تقلب منخفض — فرصة شراء'}
+        </div>
+        <div class="gk-bar"><div class="gk-fill" style="width:${Math.min(100, Math.abs(g.vega)/maxVega*100)}%;background:var(--prp)"></div></div>
+      </div>
+      <div class="greek-card">
+        <div class="gk-name">Theta (Θ)</div>
+        <div class="gk-val" style="color:var(--orn)">${fK(g.theta)}</div>
+        <div class="gk-dir" style="color:var(--orn)">
+          ${g.theta < -1000 ? '⏰ تآكل سريع — الوقت ضد المشترين' : '⏳ تآكل طبيعي'}
+        </div>
+        <div class="gk-bar"><div class="gk-fill" style="width:${Math.min(100, Math.abs(g.theta)/maxTheta*100)}%;background:var(--orn)"></div></div>
+      </div>
+    </div>
+    <div class="greeks-summary">
+      <strong style="color:var(--gld)">🎯 خلاصة اليونانيات:</strong><br>
+      ${sentiment.icon} <strong>الاتجاه:</strong> <span style="color:${sentiment.clr}">${sentiment.txt}</span><br>
+      📊 <strong>Delta الإجمالي:</strong> ${g.delta > 0 ? 'المؤسسات تملك مراكز Call أكثر → صعودي' : 'Put أكثر → تحوطي/هبوطي'}<br>
+      📈 <strong>Vega:</strong> ${Math.abs(g.vega) > 2000 ? 'التقلب المتوقع مرتفع — الأسعار ستتحرك بقوة' : 'التقلب هادئ — حركة جانبية محتملة'}<br>
+      ⏱ <strong>Theta:</strong> كل يوم يخسر حاملو العقود $${fK(Math.abs(g.theta))} — ${Math.abs(g.theta) > 2000 ? 'بائعو العقود في موقف أقوى' : 'التآكل طبيعي'}
+    </div>`;
+}
+
+// ===== STRATEGY BUILDER =====
+function renderStrategyBuilder(el) {
+  const presets = [
+    { name: 'Long Call', legs: [{ type:'call', side:'buy', qty:1 }] },
+    { name: 'Long Put', legs: [{ type:'put', side:'buy', qty:1 }] },
+    { name: 'Bull Call Spread', legs: [{ type:'call', side:'buy', qty:1, offset:-1 }, { type:'call', side:'sell', qty:1, offset:1 }] },
+    { name: 'Bear Put Spread', legs: [{ type:'put', side:'buy', qty:1, offset:1 }, { type:'put', side:'sell', qty:1, offset:-1 }] },
+    { name: 'Iron Condor', legs: [{ type:'put', side:'buy', qty:1, offset:-3 }, { type:'put', side:'sell', qty:1, offset:-1 }, { type:'call', side:'sell', qty:1, offset:1 }, { type:'call', side:'buy', qty:1, offset:3 }] },
+    { name: 'Straddle', legs: [{ type:'call', side:'buy', qty:1 }, { type:'put', side:'buy', qty:1 }] },
+    { name: 'Strangle', legs: [{ type:'call', side:'buy', qty:1, offset:2 }, { type:'put', side:'buy', qty:1, offset:-2 }] },
+  ];
+
+  el.innerHTML = `
+    <div id="stratBuilder">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px">📐 محاكي الصفقات — Strategy Builder</div>
+      <div class="strat-controls">
+        ${presets.map(p => `<button class="strat-btn" onclick="applyPreset('${p.name}')">${p.name}</button>`).join('')}
+        <button class="strat-btn" onclick="addLeg()" style="color:var(--gld);border-color:var(--gld)">+ إضافة ساق</button>
+      </div>
+      <div class="strat-legs" id="stratLegs"></div>
+      <canvas id="plCanvas"></canvas>
+      <div class="strat-stats" id="stratStats"></div>
+      <div class="greeks-summary" id="stratAnalysis" style="margin-top:8px"></div>
+    </div>`;
+
+  if (!STATE.stratLegs.length) applyPreset('Long Call');
+  else renderLegs();
+}
+
+function applyPreset(name) {
+  const presets = {
+    'Long Call': [{ type:'call', side:'buy', qty:1, offset:0 }],
+    'Long Put': [{ type:'put', side:'buy', qty:1, offset:0 }],
+    'Bull Call Spread': [{ type:'call', side:'buy', qty:1, offset:-1 }, { type:'call', side:'sell', qty:1, offset:1 }],
+    'Bear Put Spread': [{ type:'put', side:'buy', qty:1, offset:1 }, { type:'put', side:'sell', qty:1, offset:-1 }],
+    'Iron Condor': [{ type:'put', side:'buy', qty:1, offset:-3 }, { type:'put', side:'sell', qty:1, offset:-1 }, { type:'call', side:'sell', qty:1, offset:1 }, { type:'call', side:'buy', qty:1, offset:3 }],
+    'Straddle': [{ type:'call', side:'buy', qty:1, offset:0 }, { type:'put', side:'buy', qty:1, offset:0 }],
+    'Strangle': [{ type:'call', side:'buy', qty:1, offset:2 }, { type:'put', side:'buy', qty:1, offset:-2 }],
+  };
+
+  const allStrikes = [...new Set([...STATE.calls, ...STATE.puts].map(o => o.strike))].sort((a, b) => a - b);
+  const atmIdx = allStrikes.reduce((best, s, i) => Math.abs(s - STATE.price) < Math.abs(allStrikes[best] - STATE.price) ? i : best, 0);
+
+  STATE.stratLegs = (presets[name] || presets['Long Call']).map(l => {
+    const strikeIdx = Math.max(0, Math.min(allStrikes.length - 1, atmIdx + (l.offset || 0)));
+    const strike = allStrikes[strikeIdx];
+    const optArr = l.type === 'call' ? STATE.calls : STATE.puts;
+    const opt = optArr.find(o => o.strike === strike) || { strike, last: 5, ask: 5.5, bid: 4.5 };
+    return { type: l.type, side: l.side, qty: l.qty, strike, premium: l.side === 'buy' ? (opt.ask || opt.last) : (opt.bid || opt.last) };
+  });
+
+  document.querySelectorAll('.strat-btn').forEach(b => b.classList.toggle('active', b.textContent === name));
+  renderLegs();
+}
+
+function addLeg() {
+  const atm = STATE.calls.reduce((best, c) => Math.abs(c.strike - STATE.price) < Math.abs(best.strike - STATE.price) ? c : best, STATE.calls[0]);
+  STATE.stratLegs.push({ type: 'call', side: 'buy', qty: 1, strike: atm?.strike || STATE.price, premium: atm?.ask || 5 });
+  renderLegs();
+}
+
+function renderLegs() {
+  const legsEl = $('stratLegs');
+  if (!legsEl) return;
+  const allStrikes = [...new Set([...STATE.calls, ...STATE.puts].map(o => o.strike))].sort((a, b) => a - b);
+
+  legsEl.innerHTML = STATE.stratLegs.map((leg, i) => `
+    <div class="strat-leg">
+      <span style="font-size:10px;color:var(--t3);min-width:20px">#${i+1}</span>
+      <select onchange="updateLeg(${i},'side',this.value)">
+        <option value="buy" ${leg.side==='buy'?'selected':''}>شراء</option>
+        <option value="sell" ${leg.side==='sell'?'selected':''}>بيع</option>
+      </select>
+      <select onchange="updateLeg(${i},'type',this.value)">
+        <option value="call" ${leg.type==='call'?'selected':''}>Call</option>
+        <option value="put" ${leg.type==='put'?'selected':''}>Put</option>
+      </select>
+      <select onchange="updateLeg(${i},'strike',+this.value)" style="width:100px">
+        ${allStrikes.map(s => `<option value="${s}" ${s===leg.strike?'selected':''}>$${fN(s,s>=100?0:2)}</option>`).join('')}
+      </select>
+      <input type="number" value="${leg.premium}" step="0.1" min="0" onchange="updateLeg(${i},'premium',+this.value)" placeholder="Premium">
+      <input type="number" value="${leg.qty}" min="1" max="100" onchange="updateLeg(${i},'qty',+this.value)" style="width:50px" placeholder="Qty">
+      <span style="font-size:10px;color:var(--t3)">= $${fN(leg.premium * leg.qty * 100 * (leg.side==='buy'?-1:1))}</span>
+      <button class="remove-leg" onclick="removeLeg(${i})">✕</button>
+    </div>
+  `).join('');
+
+  drawPLChart();
+}
+
+function updateLeg(i, field, val) {
+  STATE.stratLegs[i][field] = val;
+  if (field === 'strike') {
+    const optArr = STATE.stratLegs[i].type === 'call' ? STATE.calls : STATE.puts;
+    const opt = optArr.find(o => o.strike === val);
+    if (opt) STATE.stratLegs[i].premium = STATE.stratLegs[i].side === 'buy' ? (opt.ask || opt.last) : (opt.bid || opt.last);
+  }
+  renderLegs();
+}
+
+function removeLeg(i) { STATE.stratLegs.splice(i, 1); renderLegs(); }
+
+function drawPLChart() {
+  const canvas = $('plCanvas');
+  if (!canvas || !STATE.stratLegs.length) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = { t: 20, r: 60, b: 30, l: 10 };
+
+  const result = calcStrategyPL(STATE.stratLegs, STATE.price);
+  const { points, maxProfit, maxLoss, breakevens } = result;
+  if (!points.length) return;
+
+  const minX = points[0].price, maxX = points[points.length - 1].price;
+  const minY = Math.min(maxLoss * 1.2, -100), maxY = Math.max(maxProfit * 1.2, 100);
+
+  const toX = p => pad.l + (p - minX) / (maxX - minX) * (W - pad.l - pad.r);
+  const toY = v => pad.t + (1 - (v - minY) / (maxY - minY)) * (H - pad.t - pad.b);
+
+  ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, W, H);
+
+  // Zero line
+  const zeroY = toY(0);
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, zeroY); ctx.lineTo(W - pad.r, zeroY); ctx.stroke();
+
+  // Fill profit area
+  ctx.beginPath();
+  points.forEach((p, i) => { const x = toX(p.price); i === 0 ? ctx.moveTo(x, toY(p.pl)) : ctx.lineTo(x, toY(p.pl)); });
+  ctx.lineTo(toX(points[points.length - 1].price), zeroY);
+  ctx.lineTo(toX(points[0].price), zeroY);
+  ctx.closePath();
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, pad.t, 0, H - pad.b);
+  grad.addColorStop(0, 'rgba(0,230,118,.15)'); grad.addColorStop(0.5, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(255,23,68,.15)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // P/L line
+  ctx.beginPath(); ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2;
+  points.forEach((p, i) => { const x = toX(p.price); i === 0 ? ctx.moveTo(x, toY(p.pl)) : ctx.lineTo(x, toY(p.pl)); });
+  ctx.stroke();
+
+  // Current price
+  ctx.strokeStyle = 'rgba(255,215,0,.3)'; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(toX(STATE.price), pad.t); ctx.lineTo(toX(STATE.price), H - pad.b); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ffd700'; ctx.font = '9px Cairo'; ctx.textAlign = 'center';
+  ctx.fillText('السعر الحالي', toX(STATE.price), pad.t - 4);
+
+  // Breakeven markers
+  breakevens.forEach(be => {
+    ctx.fillStyle = '#00bcd4';
+    ctx.beginPath(); ctx.arc(toX(be), zeroY, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'center';
+    ctx.fillText('BE $' + fN(be), toX(be), zeroY + 16);
+  });
+
+  // Labels
+  ctx.fillStyle = '#64748b'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'left';
+  [minY, maxY, 0].forEach(v => {
+    ctx.fillText('$' + fN(v, 0), W - pad.r + 4, toY(v) + 4);
+  });
+
+  // Stats
+  const statsEl = $('stratStats');
+  const totalCost = STATE.stratLegs.reduce((s, l) => s + l.premium * l.qty * 100 * (l.side === 'buy' ? 1 : -1), 0);
+  if (statsEl) statsEl.innerHTML = `
+    <div class="strat-stat"><div class="ss-lbl">أقصى ربح</div><div class="ss-val" style="color:var(--grn)">${maxProfit > 1e6 ? '∞' : '$'+fK(maxProfit)}</div></div>
+    <div class="strat-stat"><div class="ss-lbl">أقصى خسارة</div><div class="ss-val" style="color:var(--red)">$${fK(Math.abs(maxLoss))}</div></div>
+    <div class="strat-stat"><div class="ss-lbl">نقطة التعادل</div><div class="ss-val" style="color:var(--cyn)">${breakevens.map(b => '$'+fN(b)).join(' / ') || '-'}</div></div>
+    <div class="strat-stat"><div class="ss-lbl">التكلفة</div><div class="ss-val" style="color:${totalCost > 0 ? 'var(--red)' : 'var(--grn)'}">$${fN(Math.abs(totalCost))}</div></div>
+    <div class="strat-stat"><div class="ss-lbl">نسبة العائد/المخاطرة</div><div class="ss-val" style="color:var(--gld)">${maxLoss !== 0 ? fN(maxProfit / Math.abs(maxLoss)) + 'x' : '∞'}</div></div>
+    <div class="strat-stat"><div class="ss-lbl">احتمال الربح</div><div class="ss-val" style="color:var(--prp)">${calcWinProb(breakevens, STATE.price)}%</div></div>
+  `;
+
+  // Analysis
+  const analysisEl = $('stratAnalysis');
+  if (analysisEl) analysisEl.innerHTML = `
+    <strong style="color:var(--gld)">📐 تحليل الاستراتيجية:</strong><br>
+    💰 <strong>الحد الأقصى للربح:</strong> ${maxProfit > 1e6 ? 'غير محدود ↑' : '$'+fK(maxProfit)} — ${maxProfit > Math.abs(maxLoss) * 2 ? 'نسبة ممتازة!' : 'نسبة مقبولة'}<br>
+    🛡 <strong>الحد الأقصى للخسارة:</strong> $${fK(Math.abs(maxLoss))}<br>
+    ⏱ <strong>تأثير الوقت (Theta):</strong> ${totalCost > 0 ? 'كل يوم يمر يُقلل من قيمة صفقتك — الوقت ضدك' : 'أنت بائع — الوقت في صالحك'}<br>
+    🎯 <strong>التوصية:</strong> ${getStrategyAdvice(maxProfit, maxLoss, totalCost, breakevens)}
+  `;
+}
+
+function calcWinProb(breakevens, price) {
+  if (!breakevens.length) return 50;
+  // Simple approximation based on distance to breakeven
+  const dist = Math.min(...breakevens.map(b => Math.abs(b - price) / price * 100));
+  return Math.max(15, Math.min(85, Math.round(60 - dist * 5)));
+}
+
+function getStrategyAdvice(maxP, maxL, cost, bes) {
+  const ratio = maxL !== 0 ? maxP / Math.abs(maxL) : Infinity;
+  if (ratio > 3) return 'نسبة ممتازة! الربح المحتمل أكبر بـ ' + fN(ratio) + 'x من الخسارة';
+  if (ratio > 1.5) return 'نسبة جيدة. تأكد من إدارة المخاطر';
+  if (cost < 0) return 'استراتيجية ائتمانية — تحصل على قسط مقدماً. راقب مستويات الـ Strike';
+  return 'نسبة متوازنة. استخدم وقف خسارة عند ' + fN(Math.abs(maxL) * 0.5) + '$';
+}
+
+// ===== FEAR & GREED =====
+function renderFearGreed(el) {
+  const fg = STATE.fearGreed;
+  const label = fg > 75 ? 'طمع شديد 🤑' : fg > 60 ? 'طمع 😎' : fg > 40 ? 'محايد 😐' : fg > 25 ? 'خوف 😰' : 'خوف شديد 😱';
+  const labelClr = fg > 75 ? 'var(--grn)' : fg > 60 ? 'var(--grn2)' : fg > 40 ? 'var(--ylw)' : fg > 25 ? 'var(--orn)' : 'var(--red)';
+
+  el.innerHTML = `
+    <div id="fgWrap">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px">😱 مؤشر الخوف والطمع — Fear & Greed</div>
+      <canvas id="fgCanvas"></canvas>
+      <div class="fg-val" style="color:${labelClr}">${fg}</div>
+      <div class="fg-label" style="color:${labelClr}">${label}</div>
+      <div class="fg-factors">
+        <div class="fg-factor"><span>Put/Call Ratio</span><span style="color:${STATE.pcRatio > 1 ? 'var(--red)' : 'var(--grn)'}">${STATE.pcRatio}</span></div>
+        <div class="fg-factor"><span>IV Rank</span><span style="color:${STATE.ivRank > 50 ? 'var(--red)' : 'var(--grn)'}">${STATE.ivRank}%</span></div>
+        <div class="fg-factor"><span>Delta Flow</span><span style="color:${STATE.greeksAggregate.delta > 0 ? 'var(--grn)' : 'var(--red)'}">
+          ${STATE.greeksAggregate.delta > 0 ? 'صعودي' : 'هبوطي'}</span></div>
+        <div class="fg-factor"><span>GEX</span><span style="color:${STATE.gammaLevels.reduce((s,l)=>s+l.netGEX,0) > 0 ? 'var(--grn)' : 'var(--red)'}">
+          ${STATE.gammaLevels.reduce((s,l)=>s+l.netGEX,0) > 0 ? 'موجب' : 'سالب'}</span></div>
+        <div class="fg-factor"><span>Volume Trend</span><span style="color:var(--blu)">طبيعي</span></div>
+        <div class="fg-factor"><span>Skew</span><span style="color:var(--prp)">محايد</span></div>
+      </div>
+      <div class="greeks-summary" style="margin-top:12px;text-align:right">
+        <strong style="color:var(--gld)">📊 قراءة المؤشر:</strong><br>
+        ${fg > 70 ? '⚠️ السوق في منطقة طمع — احتمالية تصحيح قريب. خفف مراكزك واحمِ أرباحك بعقود Put' :
+          fg < 30 ? '💡 السوق في منطقة خوف — فرصة شراء محتملة. ابحث عن عقود Call بأسعار منخفضة' :
+          '✅ السوق متوازن — لا إشارات متطرفة. استمر بخطتك الحالية'}
+      </div>
+    </div>`;
+
+  setTimeout(drawFGGauge, 50);
+}
+
+function drawFGGauge() {
+  const canvas = $('fgCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 260 * dpr; canvas.height = 160 * dpr;
+  ctx.scale(dpr, dpr);
+
+  const cx = 130, cy = 140, r = 110;
+  const startAngle = Math.PI, endAngle = 2 * Math.PI;
+
+  // Background arc
+  const gradient = ctx.createLinearGradient(20, cy, 240, cy);
+  gradient.addColorStop(0, '#ff1744'); gradient.addColorStop(0.25, '#ff9800');
+  gradient.addColorStop(0.5, '#ffc107'); gradient.addColorStop(0.75, '#8bc34a');
+  gradient.addColorStop(1, '#00e676');
+
+  ctx.lineWidth = 20; ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(255,255,255,.08)';
+  ctx.beginPath(); ctx.arc(cx, cy, r, startAngle, endAngle); ctx.stroke();
+
+  ctx.strokeStyle = gradient;
+  ctx.beginPath(); ctx.arc(cx, cy, r, startAngle, endAngle); ctx.stroke();
+
+  // Needle
+  const angle = startAngle + (STATE.fearGreed / 100) * Math.PI;
+  const nx = cx + Math.cos(angle) * (r - 15);
+  const ny = cy + Math.sin(angle) * (r - 15);
+
+  ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(nx, ny); ctx.stroke();
+
+  ctx.fillStyle = '#ffd700';
+  ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
+
+  // Labels
+  ctx.fillStyle = '#ff1744'; ctx.font = 'bold 10px Cairo'; ctx.textAlign = 'center';
+  ctx.fillText('خوف', 35, cy - 10);
+  ctx.fillStyle = '#00e676'; ctx.fillText('طمع', 225, cy - 10);
+}
+
+// ===== FLOW TAB =====
+function renderFlowTab(el) {
+  if (!STATE.flowAlerts.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">لا توجد تنبيهات تدفق حالياً</div>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div style="padding:8px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px">🌊 تدفق السيولة الذكي — Smart Money Flow</div>
+      ${STATE.flowAlerts.map(a => `
+        <div class="flow-item ${a.bullish ? '' : 'bearish'}">
+          <span class="fl-sym">${a.sym}</span>
+          <span class="badge ${a.bullish ? 'badge-grn' : 'badge-red'}">${a.side}</span>
+          <span class="badge ${a.type === 'SWEEP' ? 'badge-ylw' : a.type === 'BLOCK' ? 'badge-prp' : 'badge-blu'}">${a.type}</span>
+          <span style="font-weight:600">$${fN(a.strike, 0)}</span>
+          <span class="fl-vol">Vol: ${fK(a.vol)}</span>
+          <span class="fl-vol">OI: ${fK(a.oi)}</span>
+          <span style="font-weight:700;color:${a.bullish ? 'var(--grn)' : 'var(--red)'}">$${fK(a.premium)}</span>
+          <span style="font-size:10px;color:var(--t3);margin-right:auto">${a.time}</span>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ===== LIVE FLOW SIDEBAR =====
+function renderLiveFlow() {
+  const el = $('liveFlow');
+  if (!el) return;
+  el.innerHTML = STATE.flowAlerts.slice(0, 6).map(a => `
+    <div class="flow-item ${a.bullish ? '' : 'bearish'}" style="font-size:10px">
+      <span class="fl-sym" style="font-size:10px">${a.sym}</span>
+      <span class="badge ${a.bullish ? 'badge-grn' : 'badge-red'}" style="font-size:8px">${a.side}</span>
+      <span style="font-size:9px">$${fN(a.strike,0)}</span>
+      <span style="font-size:9px;color:var(--t3)">${a.type}</span>
+    </div>
+  `).join('');
+}
+
+// ===== WATCHLIST =====
+function renderWatchlist() {
+  const el = $('watchlist');
+  if (!el) return;
+  el.innerHTML = STATE.watchlist.map(sym => {
+    const d = STATE.wlData[sym] || {};
+    return `<div class="wl-item" onclick="loadSymbol('${sym}')">
+      <span class="wl-sym" style="${sym === STATE.sym ? 'color:var(--gld)' : ''}">${sym}</span>
+      <span class="wl-prc" style="color:${(d.change||0) >= 0 ? 'var(--grn)' : 'var(--red)'}">
+        ${d.price ? '$'+fN(d.price) : '—'}
+      </span>
+    </div>`;
+  }).join('');
+}
+
+// ===== AI CHAT =====
+async function sendAI() {
+  const input = $('aiInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const msgsEl = $('aiMessages');
+  msgsEl.innerHTML += `<div class="ai-msg user">${msg}</div>`;
+  msgsEl.innerHTML += `<div class="ai-msg bot" id="aiTyping"><span class="typing">⏳ يحلل البيانات...</span></div>`;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  const context = `السهم: ${STATE.sym}, السعر: $${STATE.price}, P/C: ${STATE.pcRatio}, IV Rank: ${STATE.ivRank}%, Delta: ${STATE.greeksAggregate.delta}, Fear/Greed: ${STATE.fearGreed}, GEX: ${STATE.gammaLevels.reduce((s,l)=>s+l.netGEX,0) > 0 ? 'موجب' : 'سالب'}, عدد Calls: ${STATE.calls.length}, عدد Puts: ${STATE.puts.length}`;
+
+  try {
+    const r = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, context })
+    });
+    const d = await r.json();
+    const typing = $('aiTyping');
+    if (typing) typing.outerHTML = `<div class="ai-msg bot">${d.reply || d.error || 'خطأ في الاتصال'}</div>`;
+  } catch(e) {
+    const typing = $('aiTyping');
+    if (typing) typing.outerHTML = `<div class="ai-msg bot" style="border-right-color:var(--red)">⚠️ تأكد من إضافة ANTHROPIC_API_KEY في إعدادات Vercel</div>`;
+  }
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function askAI(q) { $('aiInput').value = q; sendAI(); }
+
+// ===== VIEW SWITCHING =====
+function switchView(view) {
+  document.querySelectorAll('.hdr-tab').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function setTF(tf) {
+  STATE.tf = tf;
+  document.querySelectorAll('#chartHeader .ch-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  loadSymbol(STATE.sym);
+}
+
+function setChartType(type) {
+  STATE.chartType = type;
+  drawChart();
+}
+
+function toggleIndicator(ind) {
+  STATE.indicators[ind] = !STATE.indicators[ind];
+  event.target.classList.toggle('active', STATE.indicators[ind]);
+  drawChart();
+}
+
+async function changeExpiry(exp) {
+  const od = await fetchOptions(STATE.sym, exp);
+  if (od) {
+    STATE.calls = od.calls || [];
+    STATE.puts = od.puts || [];
+    STATE.expiry = od.expiry;
+    STATE.gammaLevels = calcGammaExposure(STATE.calls, STATE.puts, STATE.price);
+    calcAggregateGreeks(STATE.calls, STATE.puts, STATE.price);
+    switchTab(STATE.activeTab);
+  }
+}
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  $('clock').textContent = now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  // Market status (ET)
+  const et = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const h = et.getHours(), m = et.getMinutes(), day = et.getDay();
+  const open = day >= 1 && day <= 5 && (h > 9 || (h === 9 && m >= 30)) && h < 16;
+  const pre = day >= 1 && day <= 5 && h >= 4 && (h < 9 || (h === 9 && m < 30));
+  const after = day >= 1 && day <= 5 && h >= 16 && h < 20;
+  const status = $('mktStatus');
+  if (open) { status.textContent = '🟢 السوق مفتوح'; status.className = 'badge badge-grn'; }
+  else if (pre) { status.textContent = '🟡 ما قبل الافتتاح'; status.className = 'badge badge-ylw'; }
+  else if (after) { status.textContent = '🟠 ما بعد الإغلاق'; status.className = 'badge badge-orn'; }
+  else { status.textContent = '🔴 السوق مغلق'; status.className = 'badge badge-red'; }
+}
+
+// ===== TICKER TAPE =====
+async function initTicker() {
+  const syms = ['SPY','QQQ','AAPL','TSLA','NVDA','MSFT','AMZN','META','GOOGL','AMD','NFLX','JPM'];
+  const el = $('ticker');
+  // Show placeholder first
+  el.innerHTML = syms.map(s => `<span class="tick-item"><span class="sym">${s}</span><span class="prc">—</span></span>`).join('');
+
+  // Fetch one by one in background
+  for (const sym of syms) {
+    try {
+      const r = await fetch(`/api/stock?s=${sym}&range=1d&interval=5m`);
+      const d = await r.json();
+      if (d.price) {
+        STATE.wlData[sym] = { price: d.price, change: d.change, changePct: d.changePct };
+      }
+    } catch(e) {}
+  }
+
+  el.innerHTML = syms.map(s => {
+    const d = STATE.wlData[s] || {};
+    const up = (d.change || 0) >= 0;
+    return `<span class="tick-item">
+      <span class="sym">${s}</span>
+      <span class="prc" style="color:${up ? 'var(--grn)' : 'var(--red)'}">$${d.price ? fN(d.price) : '—'}</span>
+      <span style="color:${up ? 'var(--grn)' : 'var(--red)'};font-size:10px">${d.changePct ? (up?'+':'') + d.changePct + '%' : ''}</span>
+    </span>`;
+  }).join('');
+
+  renderWatchlist();
+}
+
+// ===== INIT =====
+updateClock();
+setInterval(updateClock, 1000);
+loadSymbol('AAPL');
+initTicker();
+
+// Refresh data every 60s
+setInterval(() => loadSymbol(STATE.sym), 60000);
+
+// Handle resize
+window.addEventListener('resize', () => {
+  drawChart();
+  if (STATE.activeTab === 'gamma') {
+    setTimeout(() => drawGammaChart(STATE.gammaLevels), 100);
+  }
+});
+</script>
+</body>
+</html>
